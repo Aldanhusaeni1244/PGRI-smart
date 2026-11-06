@@ -1,0 +1,6 @@
+{
+  "name": "E-Learning SMP PGRI - Pembelajaran & Akademik Digital",
+  "description": "Platform e-learning terpadu SMP PGRI dengan manajemen akademik real-time, tugas interaktif, kuis CBT, dan notifikasi otomatis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

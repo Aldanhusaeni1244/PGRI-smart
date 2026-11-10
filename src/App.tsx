@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppProvider, useApp } from './context/AppContext';
-import { Navbar } from './components/layout/Navbar';
+import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
+import { LoginPage } from './components/auth/LoginPage';
 import { StudentDashboard } from './components/dashboard/StudentDashboard';
 import { TeacherDashboard } from './components/dashboard/TeacherDashboard';
 import { AcademicMonitor } from './components/academic/AcademicMonitor';
@@ -13,6 +15,7 @@ import { AttendanceTracker } from './components/attendance/AttendanceTracker';
 import { ScheduleCalendar } from './components/schedule/ScheduleCalendar';
 import { NotificationDrawer } from './components/notifications/NotificationDrawer';
 import { ToastContainer } from './components/common/ToastContainer';
+import { PgriSmartExtensionHub } from './components/extensions/PgriSmartExtensionHub';
 import { SCHOOL_PROFILE } from './data/mockData';
 import {
   LayoutDashboard,
@@ -21,13 +24,44 @@ import {
   FileQuestion,
   LineChart,
   Megaphone,
-  CalendarCheck,
-  CalendarDays
 } from 'lucide-react';
 
-const MainContent: React.FC = () => {
-  const { role, activeTab, setActiveTab } = useApp();
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+const DashboardContent: React.FC = () => {
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const { role, setRole, activeTab, setActiveTab } = useApp();
+  const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
+
+  // Synchronize AuthContext role with AppContext role
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'student' && role !== 'siswa') {
+        setRole('siswa');
+      } else if (user.role === 'teacher' && role !== 'guru') {
+        setRole('guru');
+      } else if (user.role === 'homeroom' && role !== 'wali_kelas') {
+        setRole('wali_kelas');
+      }
+    }
+  }, [user, role, setRole]);
+
+  // Loading Screen
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="text-xs font-semibold text-slate-500">
+            Memuat Sesi Pengguna SMP PGRI 1...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If not logged in, render LoginPage
+  if (!isAuthenticated || !user) {
+    return <LoginPage />;
+  }
 
   const renderActiveView = () => {
     switch (activeTab) {
@@ -54,12 +88,12 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors">
-      {/* Top Navbar */}
-      <Navbar onOpenNotifications={() => setIsNotificationOpen(true)} />
+      {/* Top Header */}
+      <Header onOpenNotifications={() => setIsNotificationOpen(true)} />
 
       {/* Main Layout Container */}
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
-        {/* Left Sidebar */}
+        {/* Executive Navy Left Sidebar */}
         <Sidebar />
 
         {/* Viewport Content */}
@@ -133,14 +167,19 @@ const MainContent: React.FC = () => {
 
       {/* Toast alert system */}
       <ToastContainer />
+
+      {/* Modular Extension Hub */}
+      <PgriSmartExtensionHub />
     </div>
   );
 };
 
 export default function App() {
   return (
-    <AppProvider>
-      <MainContent />
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <DashboardContent />
+      </AppProvider>
+    </AuthProvider>
   );
 }

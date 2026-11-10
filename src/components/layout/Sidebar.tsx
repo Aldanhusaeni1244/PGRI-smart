@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
   BookOpen,
@@ -10,18 +11,26 @@ import {
   Megaphone,
   CalendarDays,
   Award,
-  Users
+  Users,
+  ShieldCheck,
+  GraduationCap
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const { role, activeTab, setActiveTab, assignments, unreadCount } = useApp();
+  let authUser = null;
+  try {
+    const auth = useAuth();
+    authUser = auth.user;
+  } catch {
+    // Fallback if rendered outside AuthProvider
+  }
 
   const pendingAssignmentsCount = assignments.filter((a) => {
     if (role === 'siswa') {
       const mySub = a.submissions.find((s) => s.studentId === 'std_01');
       return !mySub;
     }
-    // for teacher: need grading
     return a.submissions.some((s) => s.status === 'terkumpul');
   }).length;
 
@@ -79,33 +88,37 @@ export const Sidebar: React.FC = () => {
     },
   ];
 
+  const displayName = authUser?.name || (role === 'siswa' ? 'Raditya Pratama' : role === 'guru' ? 'M.Pd (Guru IPA)' : 'Dra. Hj. Sri Wahyuni');
+  const displayNisnOrNip = authUser?.nisnOrNip || (role === 'siswa' ? 'NISN: 0098234120' : role === 'guru' ? 'NIP: 19850312' : 'NIP: 19780415');
+  const displayClass = authUser?.classInfo || (role === 'siswa' ? 'Siswa Kelas 8A' : role === 'guru' ? 'Guru Pengajar IPA' : 'Wali Kelas 8A');
+
   return (
-    <aside className="w-64 shrink-0 hidden md:flex flex-col justify-between bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 transition-colors">
+    <aside className="w-64 shrink-0 hidden md:flex flex-col justify-between bg-slate-900 border-r border-slate-800 p-4 transition-colors text-slate-100 selection:bg-blue-600 selection:text-white">
       <div className="space-y-6">
-        {/* User Identity Card */}
-        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
+        {/* User Identity Card (Executive Navy Style) */}
+        <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-600/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
-              {role === 'siswa' ? '8A' : role === 'guru' ? 'IPA' : 'ADM'}
+            <div className="w-9 h-9 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+              {role === 'siswa' ? <GraduationCap className="w-4 h-4" /> : role === 'guru' ? <BookOpen className="w-4 h-4" /> : <ShieldCheck className="w-4 h-4" />}
             </div>
             <div className="min-w-0">
-              <div className="text-xs font-semibold text-slate-900 dark:text-white truncate">
-                {role === 'siswa' ? 'Raditya Pratama' : role === 'guru' ? 'Dra. Hj. Sri Wahyuni' : 'Drs. H. Mulyono'}
+              <div className="text-xs font-bold text-white truncate">
+                {displayName}
               </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                {role === 'siswa' ? 'NISN: 0098234120' : role === 'guru' ? 'NIP: 19780512...' : 'Kepala Sekolah'}
+              <div className="text-[11px] text-slate-400 font-mono truncate">
+                {displayNisnOrNip}
               </div>
             </div>
           </div>
-          <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-            <span>Tahun Ajaran</span>
-            <span className="font-semibold text-slate-700 dark:text-slate-300">2026/2027 Genap</span>
+          <div className="mt-2.5 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
+            <span className="truncate max-w-[130px] font-medium text-blue-400">{displayClass}</span>
+            <span className="font-semibold text-slate-300 font-mono text-[10px]">2026/27 Genap</span>
           </div>
         </div>
 
         {/* Navigation Section */}
         <div className="space-y-1">
-          <div className="px-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
+          <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
             Menu Pembelajaran
           </div>
           {menuItems.map((item) => {
@@ -115,14 +128,14 @@ export const Sidebar: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-blue-600 text-white font-medium shadow-md'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   <span className="whitespace-nowrap">{item.label}</span>
                 </div>
                 {item.badge && (
@@ -136,7 +149,7 @@ export const Sidebar: React.FC = () => {
                         ? 'bg-amber-600'
                         : item.badgeColor === 'blue'
                         ? 'bg-blue-600'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                        : 'bg-slate-800 text-slate-300'
                     }`}
                   >
                     {item.badge}
@@ -149,13 +162,13 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Bottom Educational Quality Badge */}
-      <div className="pt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-2">
-        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-medium">
-          <Award className="w-4 h-4 text-amber-500 shrink-0" />
+      <div className="pt-4 border-t border-slate-800 text-xs text-slate-400 space-y-2">
+        <div className="flex items-center gap-2 text-slate-200 font-semibold">
+          <Award className="w-4 h-4 text-amber-400 shrink-0" />
           <span>Kurikulum Merdeka SMP</span>
         </div>
-        <p className="text-[11px] leading-relaxed text-slate-500">
-          SMP PGRI 1 Terakreditasi A · Penilaian Terpadu & Berkelanjutan
+        <p className="text-[11px] leading-relaxed text-slate-400">
+          SMP PGRI 1 Terakreditasi A (Unggul) · Portal Terpadu Guru & Siswa
         </p>
       </div>
     </aside>

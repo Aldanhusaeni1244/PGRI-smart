@@ -17,6 +17,7 @@ import {
 import { NewAssignmentModal } from '../modals/NewAssignmentModal';
 import { NewAnnouncementModal } from '../modals/NewAnnouncementModal';
 import { GradeSubmissionModal } from '../modals/GradeSubmissionModal';
+import { DashboardHero } from './DashboardHero';
 
 export const TeacherDashboard: React.FC = () => {
   const {
@@ -74,46 +75,34 @@ export const TeacherDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Teacher Welcome Header */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1 max-w-xl">
-          <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Dashboard Guru & Wali Kelas 8A</span>
-          </div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
-            Selamat Bertugas, {activeUser.name}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Kelola materi, evaluasi tugas mandiri, pantau presensi kehadiran, dan pantau ketuntasan KKM siswa binaan Anda secara real-time.
-          </p>
-        </div>
-
-        {/* Action Button Strip */}
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-          <button
-            onClick={() => setIsNewAssignmentOpen(true)}
-            className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors flex items-center gap-1.5"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Buat Tugas</span>
-          </button>
-          <button
-            onClick={() => setIsNewAnnouncementOpen(true)}
-            className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors flex items-center gap-1.5"
-          >
-            <Megaphone className="w-4 h-4 text-blue-600" />
-            <span>Siarkan Info</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('cbt-ujian')}
-            className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors flex items-center gap-1.5"
-          >
-            <FileQuestion className="w-4 h-4 text-emerald-600" />
-            <span>Bank Soal CBT</span>
-          </button>
-        </div>
-      </div>
+      {/* Dynamic Hero Banner from AuthContext */}
+      <DashboardHero
+        actionButtons={
+          <>
+            <button
+              onClick={() => setIsNewAssignmentOpen(true)}
+              className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow-xs transition-colors flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Buat Tugas</span>
+            </button>
+            <button
+              onClick={() => setIsNewAnnouncementOpen(true)}
+              className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <Megaphone className="w-4 h-4 text-blue-300" />
+              <span>Siarkan Info</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('cbt-ujian')}
+              className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <FileQuestion className="w-4 h-4 text-emerald-300" />
+              <span>Bank Soal CBT</span>
+            </button>
+          </>
+        }
+      />
 
       {/* 4-Column KPI Strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

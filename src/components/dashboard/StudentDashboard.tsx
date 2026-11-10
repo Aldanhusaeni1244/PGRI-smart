@@ -15,7 +15,7 @@ import {
   Check
 } from 'lucide-react';
 import { SubmitAssignmentModal } from '../modals/SubmitAssignmentModal';
-import { SCHOOL_PROFILE } from '../../data/mockData';
+import { DashboardHero } from './DashboardHero';
 
 export const StudentDashboard: React.FC = () => {
   const {
@@ -48,33 +48,13 @@ export const StudentDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Hero Welcome Banner with Campus Asset */}
-      <div className="relative overflow-hidden rounded-2xl bg-slate-900 border border-slate-800 text-white shadow-lg">
-        <img
-          src={SCHOOL_PROFILE.campusBannerUrl}
-          alt="Kampus SMP PGRI"
-          referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover opacity-25"
-        />
-        <div className="relative z-10 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2 text-blue-300 text-xs font-semibold tracking-wide uppercase">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Portal Akademik Siswa Terpadu SMP PGRI</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Semangat Belajar, {activeUser.name}!
-            </h1>
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Anda terdaftar di <strong className="text-white">Kelas 8A</strong> (NISN: {activeUser.identifier}).
-              Pantau tugas, kuis CBT, dan perkembangan nilai akademik Anda secara real-time di bawah ini.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0">
+      {/* Dynamic Hero Banner from AuthContext */}
+      <DashboardHero
+        actionButtons={
+          <>
             <button
               onClick={() => setActiveTab('cbt-ujian')}
-              className="px-4 py-2.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow transition-colors flex items-center gap-2 whitespace-nowrap"
+              className="px-4 py-2.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow-sm transition-colors flex items-center gap-2 whitespace-nowrap"
             >
               <span>Mulai Kuis CBT</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -85,9 +65,9 @@ export const StudentDashboard: React.FC = () => {
             >
               Lihat Rapor Nilai
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* 4-Column KPI Strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

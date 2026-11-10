@@ -9,7 +9,7 @@ import { TeacherDashboard } from './components/dashboard/TeacherDashboard';
 import { AcademicMonitor } from './components/academic/AcademicMonitor';
 import { AssignmentManager } from './components/assignments/AssignmentManager';
 import { CBTExamModule } from './components/cbt/CBTExamModule';
-import { SubjectList } from './components/subjects/SubjectList';
+import { SubjectPage } from './components/subjects/SubjectPage';
 import { AnnouncementBoard } from './components/announcements/AnnouncementBoard';
 import { AttendanceTracker } from './components/attendance/AttendanceTracker';
 import { ScheduleCalendar } from './components/schedule/ScheduleCalendar';
@@ -68,7 +68,7 @@ const DashboardContent: React.FC = () => {
       case 'dashboard':
         return role === 'siswa' ? <StudentDashboard /> : <TeacherDashboard />;
       case 'mata-pelajaran':
-        return <SubjectList />;
+        return <SubjectPage />;
       case 'tugas':
         return <AssignmentManager />;
       case 'cbt-ujian':

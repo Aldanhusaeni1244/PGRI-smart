@@ -10,6 +10,9 @@ export interface AuthUser {
   classInfo: string;
   avatar: string;
   email?: string;
+  phone?: string;
+  address?: string;
+  motto?: string;
 }
 
 export interface DemoCredential {
@@ -74,6 +77,7 @@ interface AuthContextType {
   logout: () => void;
   switchRole: (role: AuthRole) => void;
   quickLogin: (role: AuthRole) => void;
+  updateUser: (updatedFields: Partial<AuthUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -169,6 +173,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Update user profile data
+  const updateUser = (updatedFields: Partial<AuthUser>) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const updated = { ...prev, ...updatedFields };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Gagal memperbarui profil pengguna di localStorage:', e);
+      }
+      return updated;
+    });
+  };
+
   // Logout & session cleanup
   const logout = () => {
     try {
@@ -189,6 +207,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         switchRole,
         quickLogin,
+        updateUser,
       }}
     >
       {children}
